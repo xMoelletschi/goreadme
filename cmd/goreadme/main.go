@@ -11,11 +11,8 @@ import (
 	"path/filepath"
 
 	"github.com/golang/gddo/gosrc"
-	"github.com/posener/goaction"
-	"github.com/posener/goaction/actionutil"
 	"github.com/posener/goaction/log"
 	"github.com/xMoelletschi/goreadme"
-	"golang.org/x/oauth2"
 )
 
 var (
@@ -24,24 +21,6 @@ var (
 
 	// Write readme output
 	out io.WriteCloser = os.Stdout
-
-	// Github action variables.
-	//goaction:description Name of readme file.
-	//goaction:default README.md
-	path = os.Getenv("readme-file")
-	//goaction:description Print Goreadme debug output. Set to any non empty value for true.
-	_ = os.Getenv("debug")
-	//goaction:description Email for commit message.
-	//goaction:default posener@gmail.com
-	email = os.Getenv("email")
-	//goaction:description Github token for PR comments. Optional.
-	githubToken = os.Getenv("github-token")
-
-	// Aliases for path and githubToken.
-	//goaction:description An optional alias which can be used instead of 'readme-file'.
-	path2 = os.Getenv("README_FILE")
-	//goaction:description An optional alias which can be used instead of 'github-token'.
-	githubToken2 = os.Getenv("GITHUB_TOKEN")
 )
 
 func init() {
@@ -80,39 +59,11 @@ Flags:
 		flag.PrintDefaults()
 	}
 	flag.Parse()
-
-	if path == "" {
-		path = path2
-	}
-	if githubToken == "" {
-		githubToken = githubToken2
-	}
 }
 
 func main() {
-	// Steps to do only in Github Action mode.
-	if path != "" {
-		// Setup output file.
-		var err error
-		out, err = os.Create(path)
-		if err != nil {
-			log.Fatalf("Failed opening file %s: %s", path, err)
-		}
-		defer out.Close()
-	}
-	if goaction.CI {
-		// Fix import path if it was not overridden by the user.
-		if cfg.ImportPath == "" {
-			cfg.ImportPath = "github.com/" + goaction.Repository
-		}
-	}
-
 	ctx := context.Background()
 	client := http.DefaultClient
-	if githubToken != "" {
-		client = oauth2.NewClient(ctx, oauth2.StaticTokenSource(
-			&oauth2.Token{AccessToken: githubToken}))
-	}
 	gr := goreadme.New(client)
 
 	err := gr.WithConfig(cfg).Create(ctx, pkg(flag.Args()), out)
@@ -120,28 +71,7 @@ func main() {
 		log.Fatalf("Failed: %s", err)
 	}
 
-	if !goaction.CI {
-		return
-	}
-
-	// Runs only in Github CI mode.
-
-	diff := gitDiff()
-
-	log.Printf("Diff:\n\n%s\n", diff)
-
-	switch goaction.Event {
-	case goaction.EventPush:
-		if diff == "" {
-			log.Printf("No changes were made. Skipping push.")
-			break
-		}
-		push()
-	case goaction.EventPullRequest:
-		pr(diff)
-	default:
-		log.Fatalf("Unexpected action mode: %s", goaction.Event)
-	}
+	return
 }
 
 func pkg(args []string) string {
@@ -155,51 +85,4 @@ func pkg(args []string) string {
 	}
 	gosrc.SetLocalDevMode(path)
 	return "."
-}
-
-func gitDiff() string {
-	// Add files to git, in case it does not exists
-	d, err := actionutil.GitDiff(path)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if d == "" {
-		return ""
-	}
-	return fmt.Sprintf("Path: %s\n\n```diff\n%s\n```\n\n", path, d)
-}
-
-// Commit and push changes to upstream branch.
-func push() {
-	err := actionutil.GitConfig("goreadme", email)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = actionutil.GitCommitPush([]string{path}, "Update readme according to godoc")
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-// Post a pull request comment with the expected diff.
-func pr(diff string) {
-	if githubToken == "" {
-		log.Printf("In order to add request comment, set the GITHUB_TOKEN input.")
-		return
-	}
-
-	body := "[goreadme](https://github.com/xMoelletschi/goreadme) will not make any changes in this PR"
-	if diff != "" {
-		body = fmt.Sprintf(
-			"[goreadme](https://github.com/xMoelletschi/goreadme) diff for %s file for this PR:\n\n%s",
-			path,
-			diff)
-	}
-
-	ctx := context.Background()
-	err := actionutil.PRComment(ctx, githubToken, body)
-	if err != nil {
-		log.Fatal(err)
-	}
 }

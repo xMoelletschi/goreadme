@@ -2,45 +2,7 @@
 
 Package goreadme generates readme markdown file from go doc.
 
-The package can be used as a command line tool and as Github action, described below:
-
-# Github Action
-
-Github actions can be configured to update the README file automatically every time it is needed.
-Below there is an example that on every time a new change is pushed to the main branch, the
-action is trigerred, generates a new README file, and if there is a change - commits and pushes
-it to the main branch. In pull requests that affect the README content, if the `GITHUB_TOKEN`
-is given, the action will post a comment on the pull request with changes that will be made to
-the README file.
-
-To use this with Github actions, add the following content to `.github/workflows/goreadme.yml`.
-See [./action.yml](./action.yml) for all available input options.
-
-```go
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-permissions:
-  # Goreadme needs permissions to update pull requests comments and change contents.
-  pull-requests: write
-  contents: write
-jobs:
-    goreadme:
-        runs-on: ubuntu-latest
-        steps:
-        - name: Check out repository
-          uses: actions/checkout@v2
-        - name: Update readme according to Go doc
-          uses: posener/goreadme@v1
-          with:
-            badge-travisci: 'true'
-            badge-codecov: 'true'
-            badge-godoc: 'true'
-            # Optional: Token allows goreadme to comment the PR with diff preview.
-            GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-```
+The package can be used as a command line tool, described below:
 
 # Use as a command line tool
 
@@ -48,28 +10,6 @@ jobs:
 $ GO111MODULE=on go get github.com/xMoelletschi/goreadme/cmd/goreadme
 $ goreadme -h
 ```
-
-# Pre-Commit hook
-
-goreadme can also be used as a pre-commit hook, acting before each commit is made.
-
-1. Install pre-commit from [https://pre-commit.com/#install](https://pre-commit.com/#install)
-2. Create a `.pre-commit-config.yaml` file at the root of your repository with the following content:
-
-```go
-repos:
-  - repo: [https://github.com/xMoelletschi/goreadme](https://github.com/xMoelletschi/goreadme)
-    rev: v1.4.2 # Use the latest ref
-    hooks:
-      - id: goreadme
-        entry: env README_FILE=README.md goreadme
-        args: ['-badge-godoc=true']
-```
-
-3. Change README_FILE to your file name and add any flags you need in `args`.
-4. Auto-update the config to the latest repos' versions by executing `pre-commit autoupdate`
-5. Install with `pre-commit install`
-6. Now you're all set! Try a commit, see the README being updated (if relevant), and continue your commit.
 
 # Why Should You Use It
 
