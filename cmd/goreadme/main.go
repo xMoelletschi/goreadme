@@ -12,7 +12,7 @@ import (
 
 	"github.com/golang/gddo/gosrc"
 	"github.com/posener/goaction/log"
-	"github.com/xMoelletschi/goreadme"
+	"github.com/xMoelletschi/goreadme/goreadme"
 )
 
 var (
