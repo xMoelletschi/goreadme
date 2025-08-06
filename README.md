@@ -1,89 +1,24 @@
 # goreadme
 
-[![Build Status](https://travis-ci.org/posener/goreadme.svg?branch=master)](https://travis-ci.org/posener/goreadme)
-[![codecov](https://codecov.io/gh/posener/goreadme/branch/master/graph/badge.svg)](https://codecov.io/gh/posener/goreadme)
-[![GoDoc](https://img.shields.io/badge/pkg.go.dev-doc-blue)](http://pkg.go.dev/github.com/posener/goreadme)
-
 Package goreadme generates readme markdown file from go doc.
 
-The package can be used as a command line tool and as Github action, described below:
+The package can be used as a command line tool, described below:
 
-## Github Action
-
-Github actions can be configured to update the README file automatically every time it is needed.
-Below there is an example that on every time a new change is pushed to the main branch, the
-action is trigerred, generates a new README file, and if there is a change - commits and pushes
-it to the main branch. In pull requests that affect the README content, if the `GITHUB_TOKEN`
-is given, the action will post a comment on the pull request with changes that will be made to
-the README file.
-
-To use this with Github actions, add the following content to `.github/workflows/goreadme.yml`.
-See [./action.yml](./action.yml) for all available input options.
+# Use as a command line tool
 
 ```go
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-permissions:
-  # Goreadme needs permissions to update pull requests comments and change contents.
-  pull-requests: write
-  contents: write
-jobs:
-    goreadme:
-        runs-on: ubuntu-latest
-        steps:
-        - name: Check out repository
-          uses: actions/checkout@v2
-        - name: Update readme according to Go doc
-          uses: posener/goreadme@v1
-          with:
-            badge-travisci: 'true'
-            badge-codecov: 'true'
-            badge-godoc: 'true'
-            badge-goreadme: 'true'
-            # Optional: Token allows goreadme to comment the PR with diff preview.
-            GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-```
-
-## Use as a command line tool
-
-```go
-$ GO111MODULE=on go get github.com/posener/goreadme/cmd/goreadme
+$ GO111MODULE=on go get github.com/xMoelletschi/goreadme/cmd/goreadme
 $ goreadme -h
 ```
 
-## Pre-Commit hook
-
-goreadme can also be used as a pre-commit hook, acting before each commit is made.
-
-1. Install pre-commit from [https://pre-commit.com/#install](https://pre-commit.com/#install)
-2. Create a `.pre-commit-config.yaml` file at the root of your repository with the following content:
-
-```go
-repos:
-  - repo: [https://github.com/posener/goreadme](https://github.com/posener/goreadme)
-    rev: v1.4.2 # Use the latest ref
-    hooks:
-      - id: goreadme
-        entry: env README_FILE=README.md goreadme
-        args: ['-badge-goreadme=true', '-badge-godoc=true']
-```
-
-3. Change README_FILE to your file name and add any flags you need in `args`.
-4. Auto-update the config to the latest repos' versions by executing `pre-commit autoupdate`
-5. Install with `pre-commit install`
-6. Now you're all set! Try a commit, see the README being updated (if relevant), and continue your commit.
-
-## Why Should You Use It
+# Why Should You Use It
 
 Both Go doc and readme files are important. Go doc to be used by your user's library, and README
 file to welcome users to use your library. They share common content, which is usually duplicated
 from the doc to the readme or vice versa once the library is ready. The problem is that keeping
 documentation updated is important, and hard enough - keeping both updated is twice as hard.
 
-## Go Doc Instructions
+# Go Doc Instructions
 
 The formatting of the README.md is done by the go doc parser. This makes the result README.md a
 bit more limited. Currently, `goreadme` supports the formatting as explained in
@@ -102,7 +37,7 @@ func main() {
 
 * Inline code is marked with `backticks`.
 
-* URLs will just automatically be converted to links: [https://github.com/posener/goreadme](https://github.com/posener/goreadme)
+* URLs will just automatically be converted to links: [https://github.com/xMoelletschi/goreadme](https://github.com/xMoelletschi/goreadme)
 
 Additionally, the syntax was extended to include some more markdown features while keeping the Go
 doc readable:
@@ -121,7 +56,7 @@ doc readable:
 * A repository file can be linked when providing a path that start with `[./](./)`: [./goreadme.go](./goreadme.go).
 
 * A link can have a link text by prefixing it with parenthesised text:
-[goreadme page](https://github.com/posener/goreadme).
+[goreadme page](https://github.com/xMoelletschi/goreadme).
 
 * A link to repository file and can have a link text: [goreadme main file](./goreamde.go).
 
@@ -129,7 +64,7 @@ doc readable:
 
 ![title of image](https://github.githubassets.com/images/icons/emoji/unicode/1f44c.png)
 
-## Testing
+# Testing
 
 The goreadme tests the test cases in the [./testdata](./testdata) directory. It generates readme files for
 all the packages in that directory and asserts that the result readme matches the existing one.
@@ -137,9 +72,5 @@ When modifying goreadme behavior, there is no need to manually change these read
 possible to run `WRITE_READMES=1 go test ./...` which regenerates them and check the changes
 match the expected (optionally using `git diff`).
 
-## Sub Packages
-
-* [cmd/goreadme](./cmd/goreadme): Goreadme command line tool and Github action
-
 ---
-Readme created from Go doc with [goreadme](https://github.com/posener/goreadme)
+Readme created from Go doc with [goreadme](https://github.com/xMoelletschi/goreadme)

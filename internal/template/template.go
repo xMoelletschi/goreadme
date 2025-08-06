@@ -8,7 +8,7 @@ import (
 	"text/template"
 
 	"github.com/golang/gddo/doc"
-	"github.com/posener/goreadme/internal/markdown"
+	"github.com/xMoelletschi/goreadme/internal/markdown"
 )
 
 //go:embed *.md.gotmpl
