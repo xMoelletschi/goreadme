@@ -1,14 +1,10 @@
 # goreadme
 
-[![Build Status](https://travis-ci.org/posener/goreadme.svg?branch=master)](https://travis-ci.org/posener/goreadme)
-[![codecov](https://codecov.io/gh/posener/goreadme/branch/master/graph/badge.svg)](https://codecov.io/gh/posener/goreadme)
-[![GoDoc](https://img.shields.io/badge/pkg.go.dev-doc-blue)](http://pkg.go.dev/github.com/posener/goreadme)
-
 Package goreadme generates readme markdown file from go doc.
 
 The package can be used as a command line tool and as Github action, described below:
 
-## Github Action
+# Github Action
 
 Github actions can be configured to update the README file automatically every time it is needed.
 Below there is an example that on every time a new change is pushed to the main branch, the
@@ -42,19 +38,18 @@ jobs:
             badge-travisci: 'true'
             badge-codecov: 'true'
             badge-godoc: 'true'
-            badge-goreadme: 'true'
             # Optional: Token allows goreadme to comment the PR with diff preview.
             GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
 ```
 
-## Use as a command line tool
+# Use as a command line tool
 
 ```go
 $ GO111MODULE=on go get github.com/posener/goreadme/cmd/goreadme
 $ goreadme -h
 ```
 
-## Pre-Commit hook
+# Pre-Commit hook
 
 goreadme can also be used as a pre-commit hook, acting before each commit is made.
 
@@ -68,7 +63,7 @@ repos:
     hooks:
       - id: goreadme
         entry: env README_FILE=README.md goreadme
-        args: ['-badge-goreadme=true', '-badge-godoc=true']
+        args: ['-badge-godoc=true']
 ```
 
 3. Change README_FILE to your file name and add any flags you need in `args`.
@@ -76,14 +71,14 @@ repos:
 5. Install with `pre-commit install`
 6. Now you're all set! Try a commit, see the README being updated (if relevant), and continue your commit.
 
-## Why Should You Use It
+# Why Should You Use It
 
 Both Go doc and readme files are important. Go doc to be used by your user's library, and README
 file to welcome users to use your library. They share common content, which is usually duplicated
 from the doc to the readme or vice versa once the library is ready. The problem is that keeping
 documentation updated is important, and hard enough - keeping both updated is twice as hard.
 
-## Go Doc Instructions
+# Go Doc Instructions
 
 The formatting of the README.md is done by the go doc parser. This makes the result README.md a
 bit more limited. Currently, `goreadme` supports the formatting as explained in
@@ -129,17 +124,13 @@ doc readable:
 
 ![title of image](https://github.githubassets.com/images/icons/emoji/unicode/1f44c.png)
 
-## Testing
+# Testing
 
 The goreadme tests the test cases in the [./testdata](./testdata) directory. It generates readme files for
 all the packages in that directory and asserts that the result readme matches the existing one.
 When modifying goreadme behavior, there is no need to manually change these readme files. It is
 possible to run `WRITE_READMES=1 go test ./...` which regenerates them and check the changes
 match the expected (optionally using `git diff`).
-
-## Sub Packages
-
-* [cmd/goreadme](./cmd/goreadme): Goreadme command line tool and Github action
 
 ---
 Readme created from Go doc with [goreadme](https://github.com/posener/goreadme)
