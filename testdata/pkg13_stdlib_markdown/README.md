@@ -40,7 +40,7 @@ Or itemized list:
 - Item 2.
 ```
 
-[this is a link]: [https://github.com/posener/goreadme](https://github.com/posener/goreadme)
+[this is a link]: [https://github.com/xMoelletschi/goreadme](https://github.com/xMoelletschi/goreadme)
 
 ## Examples
 
