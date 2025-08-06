@@ -70,8 +70,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed: %s", err)
 	}
-
-	return
 }
 
 func pkg(args []string) string {
