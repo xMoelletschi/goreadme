@@ -1,6 +1,6 @@
 .PHONY: test-goreadme
 test-goreadme:
-	@CI=false go run cmd/goreadme/main.go -skip-sub-packages=true -title='goreadme' > README.md
+	go run main.go go --skip-sub-packages --title='goreadme' > README.md
 
 .PHONY: goreadme
 goreadme:
